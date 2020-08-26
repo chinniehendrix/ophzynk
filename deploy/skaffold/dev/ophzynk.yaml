@@ -24,13 +24,6 @@ spec:
       containers:
       - name: ophzynk
         image: ophzynk
-        resources:
-          limits:
-            memory: 512Mi
-            cpu: "500m"
-          requests:
-            memory: 32Mi
-            cpu: "100m"
         livenessProbe:
           failureThreshold: 3
           exec:

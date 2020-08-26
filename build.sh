@@ -9,6 +9,7 @@ kubectl apply -f deploy/strimzi/install/cluster-operator -n strimzi
 kubectl apply -f deploy/strimzi/install/cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml -n kafka
 kubectl apply -f deploy/strimzi/install/cluster-operator/032-RoleBinding-strimzi-cluster-operator-topic-operator-delegation.yaml -n kafka
 kubectl apply -f deploy/strimzi/install/cluster-operator/031-RoleBinding-strimzi-cluster-operator-entity-operator-delegation.yaml -n kafka
+kubectl apply -f deploy/kafka/install/cluster.yaml -n kafka
 
 dirty=$(git status --porcelain)
 if [ "$dirty" == "" ]
@@ -26,6 +27,6 @@ else
     fi
 fi
 
-mvn dockerfile:build 
+mvn clean package
 imageid=$(docker images ophzynk:latest -q)
 docker tag $imageid ophzynk:$imagetag

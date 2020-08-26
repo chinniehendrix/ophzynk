@@ -5,7 +5,11 @@ metadata:
   namespace: kafka
 spec:
   kafka:
+    version: 2.5.0
     replicas: 1
+    jvmOptions:
+      "-Xmx": "4g"
+      "-Xms": "2g"
     listeners:
       plain: {}
       tls: {}
@@ -17,7 +21,7 @@ spec:
       volumes:
       - id: 0
         type: persistent-claim
-        size: 100Gi
+        size: 10Gi
         deleteClaim: false
     config:
       offsets.topic.replication.factor: 1
