@@ -1,0 +1,16 @@
+apiVersion: skaffold/v2beta1
+kind: Config
+metadata:
+  name: ophzynk
+build:
+  artifacts:
+  - image: ophzynk
+    custom:
+      buildCommand: ./build.sh
+      dependencies:
+        paths:
+        - .
+deploy:
+  kubectl:
+    manifests:
+    - deploy/skaffold/dev/ophzynk.yaml

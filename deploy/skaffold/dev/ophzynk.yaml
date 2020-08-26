@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: ophzynk
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ophzynk
+  namespace: ophzynk
+  labels:
+    app: ophzynk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ophzynk
+  template:
+    metadata:
+      labels:
+        app: ophzynk
+    spec:
+      containers:
+      - name: ophzynk
+        image: ophzynk
