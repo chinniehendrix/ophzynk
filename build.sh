@@ -3,6 +3,13 @@ set -e
 
 eval $(minikube docker-env)
 
+# Apply Kafka Strimzi manifests
+kubectl apply -f deploy/strimzi/install/namespaces.yaml
+kubectl apply -f deploy/strimzi/install/cluster-operator -n strimzi
+kubectl apply -f deploy/strimzi/install/cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml -n kafka
+kubectl apply -f deploy/strimzi/install/cluster-operator/032-RoleBinding-strimzi-cluster-operator-topic-operator-delegation.yaml -n kafka
+kubectl apply -f deploy/strimzi/install/cluster-operator/031-RoleBinding-strimzi-cluster-operator-entity-operator-delegation.yaml -n kafka
+
 dirty=$(git status --porcelain)
 if [ "$dirty" == "" ]
 then
