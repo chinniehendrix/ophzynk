@@ -14,3 +14,4 @@ deploy:
   kubectl:
     manifests:
     - deploy/skaffold/dev/ophzynk.yaml
+    - deploy/kafka/install/cluster.yaml
