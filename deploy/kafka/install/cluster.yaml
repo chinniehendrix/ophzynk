@@ -4,6 +4,11 @@ metadata:
   name: cluster
   namespace: kafka
 spec:
+  spec:
+    clusterCa:
+      generateCertificateAuthority: false
+    clientsCa:
+      generateCertificateAuthority: false
   kafka:
     version: 2.5.0
     replicas: 1
@@ -12,10 +17,16 @@ spec:
       "-Xms": "2g"
     listeners:
       plain: {}
-      tls: {}
+      tls:
+        authentication:
+          type: tls
       external:
         type: nodeport
         tls: false
+    authorization:
+      type: simple
+      superUsers:
+        - CN=mirrormaker
     storage:
       type: jbod
       volumes:
