@@ -17,12 +17,12 @@ spec:
       "-Xms": "2g"
     listeners:
       plain: {}
-      tls:
-        authentication:
-          type: tls
+      tls: {}
       external:
         type: nodeport
-        tls: false
+        tls: true
+        authentication:
+          type: tls
     authorization:
       type: simple
       superUsers:
