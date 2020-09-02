@@ -35,9 +35,24 @@ public class Ophzynk
 {
     public static final Logger logger = LogManager.getLogger(Ophzynk.class);
     public static final String consumerGroupId = "myconsumergroup";
+    public static final String propertiesFileName = "kafka.properties";
 
     public static AdminClient createClient(String bootstrapServers){
         Properties properties = new Properties();
+
+        logger.info("Checking properties file {}", propertiesFileName);
+        File propertiesFile = new File(propertiesFileName);
+        if (propertiesFile.isFile()) {
+          logger.info("Loading properties from {}", propertiesFileName);
+          Properties propertyOverrides = new Properties();
+          try (BufferedReader propsReader = new BufferedReader(new FileReader(propertiesFile))) {
+            propertyOverrides.load(propsReader);
+          } catch (IOException e) {
+            logger.error(e);
+          }
+          properties.putAll(propertyOverrides);
+        }
+
         properties.put("bootstrap.servers", bootstrapServers);
         properties.put("connections.max.idle.ms", 10000);
         properties.put("request.timeout.ms", 20000);
