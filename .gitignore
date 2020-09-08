@@ -1,2 +1,3 @@
 target/
 deploy/kafka/certs/
+deploy/skaffold/dev/secrets/
