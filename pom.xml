@@ -37,6 +37,11 @@
         <artifactId>log4j-core</artifactId>
         <version>2.13.3</version>
     </dependency>
+    <dependency>
+      <groupId>net.logstash.log4j</groupId>
+      <artifactId>jsonevent-layout</artifactId>
+      <version>1.7</version>  
+    </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.kafka/connect-mirror -->
     <dependency>
         <groupId>org.apache.kafka</groupId>
