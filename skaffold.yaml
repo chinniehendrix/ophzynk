@@ -14,3 +14,5 @@ deploy:
   kubectl:
     manifests:
     - deploy/skaffold/dev/ophzynk.yaml
+    - deploy/skaffold/dev/secrets/ophzynk-cert.yaml
+    - deploy/skaffold/dev/secrets/cluster-ca-cert.yaml
