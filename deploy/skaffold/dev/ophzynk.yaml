@@ -4,6 +4,24 @@ metadata:
   creationTimestamp: null
   name: ophzynk
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ophzynk-config
+  namespace: ophzynk
+data:
+  ophzynk.properties: |
+    security.protocol=SSL
+    ssl.protocol=TLS
+    ssl.key.password=hello
+    ssl.keystore.location=/usr/local/certs/client-keystore.jks
+    ssl.keystore.password=helloworld
+    ssl.keystore.type=JKS
+    ssl.endpoint.identification.algorithm=
+    ssl.truststore.location=/usr/local/certs/client-truststore.jks
+    ssl.truststore.password=helloworld
+    ssl.truststore.type=JKS
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,9 +39,30 @@ spec:
       labels:
         app: ophzynk
     spec:
+      initContainers:
+        - name: create-keystore
+          image: amd64/openjdk:8-alpine
+          command: ["/bin/sh","-c","apk add openssl && \
+            openssl pkcs12 -export -nodes -out /usr/local/certs/ophzynk.p12 -inkey /tmp/ophzynk-cert/ophzynk.key -in /tmp/ophzynk-cert/ophzynk.pem -password \"pass:$KEY_PASSWORD\" && \
+            keytool -keystore /usr/local/certs/client-truststore.jks -alias CARoot -import -file /tmp/ca-cert/ca.crt -storepass \"$KEYSTORE_PASSWORD\" -noprompt  && \
+            keytool -importkeystore -srckeystore /usr/local/certs/ophzynk.p12 -srcstoretype pkcs12 -destkeystore /usr/local/certs/client-keystore.jks -deststoretype jks -srcstorepass \"$KEY_PASSWORD\"  -deststorepass \"$KEYSTORE_PASSWORD\" -noprompt"]
+          env:
+            - name: KEYSTORE_PASSWORD
+              value: helloworld
+            - name: KEY_PASSWORD
+              value: hello
+          volumeMounts:
+          - name: keystore
+            mountPath: "/usr/local/certs"
+          - name: ophzynk-cert
+            mountPath: "/tmp/ophzynk-cert"
+          - name: ca-cert
+            mountPath: "/tmp/ca-cert"
       containers:
       - name: ophzynk
         image: ophzynk
+        # command: ["sleep"]
+        # args: ["3600"]
         livenessProbe:
           failureThreshold: 3
           exec:
@@ -31,3 +70,18 @@ spec:
               - /ophzynk/health.sh
           initialDelaySeconds: 30
           periodSeconds: 30
+        volumeMounts:
+        - name: ophzynk-config
+          mountPath: /etc/config
+      volumes:
+      - name: keystore
+        emptyDir: {}
+      - name: ophzynk-cert
+        secret:
+          secretName: ophzynk-cert
+      - name: ca-cert
+        secret:
+          secretName: cluster-ca-cert
+      - name: ophzynk-config
+        configMap:
+          name: ophzynk-config
