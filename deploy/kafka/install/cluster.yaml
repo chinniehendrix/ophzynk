@@ -26,7 +26,7 @@ spec:
     authorization:
       type: simple
       superUsers:
-        - CN=mirrormaker
+        - CN=ophzynk
     storage:
       type: jbod
       volumes:
