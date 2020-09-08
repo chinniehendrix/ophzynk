@@ -20,29 +20,18 @@ import java.util.Collections;
 import java.util.Map;
 import java.io.*;
 
-class Util {
-    private static final Logger logger = LogManager.getLogger(Util.class);
-
-    static String stackTrace(Throwable e) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        return sw.toString();
-    }
-}
-
 public class Ophzynk 
 {
-    public static final Logger logger = LogManager.getLogger(Ophzynk.class);
+    static Logger logger = LogManager.getLogger("CONSOLE_JSON_APPENDER");
     public static final String consumerGroupId = "myconsumergroup";
-    public static final String propertiesFileName = "kafka.properties";
+    public static final String propertiesFileName = "/etc/config/ophzynk.properties";
 
     public static AdminClient createClient(String bootstrapServers){
         Properties properties = new Properties();
 
         logger.info("Checking properties file {}", propertiesFileName);
         File propertiesFile = new File(propertiesFileName);
-        if (propertiesFile.isFile()) {
+        // if (propertiesFile.isFile()) {
           logger.info("Loading properties from {}", propertiesFileName);
           Properties propertyOverrides = new Properties();
           try (BufferedReader propsReader = new BufferedReader(new FileReader(propertiesFile))) {
@@ -51,7 +40,7 @@ public class Ophzynk
             logger.error(e);
           }
           properties.putAll(propertyOverrides);
-        }
+        // }
 
         properties.put("bootstrap.servers", bootstrapServers);
         properties.put("connections.max.idle.ms", 10000);
@@ -72,7 +61,7 @@ public class Ophzynk
                 logger.info("ConsumerGroupDescriptions for consumer group {} - {} \n", consumerGroupId, consumerGroupDescriptions);
                 return consumerGroupDescriptions.get(consumerGroupId).state() == ConsumerGroupState.EMPTY || (consumerGroupDescriptions.get(consumerGroupId).state() == ConsumerGroupState.DEAD);
             } catch (InterruptedException | ExecutionException e) {
-                logger.error(Util.stackTrace(e));
+                logger.error(e);
                 return false;
             }
 
@@ -97,9 +86,10 @@ public class Ophzynk
         }
     }
 
-    public static void main( String[] args )
+    public static void main( String[] args )  throws InterruptedException 
     {
-        System.out.println( "Attempt to create topics" );
+        logger.debug( "Entering main function" );
         createTopics("cluster-kafka-bootstrap.kafka.svc.cluster.local:9092");
+        Thread.sleep(3600);
     }
 }
